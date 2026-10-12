@@ -1,0 +1,23 @@
+# Google crawlers — explicitly allowed for Search, Shopping & Merchant Center checks
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /thank-you
+Disallow: /account
+Disallow: /part-request
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /thank-you
+Disallow: /account
+Disallow: /part-request
+
+Sitemap: https://texpertdeals.us/sitemap.xml

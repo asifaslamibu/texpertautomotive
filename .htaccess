@@ -1,0 +1,16 @@
+# ---------------------------------------------------------------------
+# Serve the Laravel app from /public WITHOUT showing /public in the URL.
+# Use this only when you cannot point the domain's document root at /public.
+# Upload this file to the same folder your domain points to (e.g. public_html).
+# ---------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If someone visits /public/... send them to the clean URL (avoids duplicate paths)
+    RewriteCond %{THE_REQUEST} \s/+public/(\S*) [NC]
+    RewriteRule ^ /%1 [R=301,L]
+
+    # Internally route every request into the /public front controller
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule> 

@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureAdmin
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! Auth::check() || ! Auth::user()->is_admin) {
+            Auth::logout();
+
+            return redirect()->route('admin.login')->withErrors([
+                'email' => 'Please sign in with an admin account to continue.',
+            ]);
+        }
+
+        // Read-only staff (e.g. auditors) may view any of their sections but never write.
+        if (Auth::user()->isReadOnly() && ! $request->isMethodSafe()) {
+            abort(403, 'Your role has read-only access — changes are not permitted.');
+        }
+
+        return $next($request);
+    }
+}
