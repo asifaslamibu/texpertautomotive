@@ -27,3 +27,10 @@ Thumbs.db
 
 # spreadsheets dropped in the project root for imports
 /*.xlsx
+
+# scraped demo catalogue images (local dummy data only)
+/public/uploads/products/demo/
+/public/uploads/brands/demo/
+
+# database dumps never go to the repo (customer data, password hashes)
+/*.sql

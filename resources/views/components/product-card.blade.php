@@ -1,69 +1,56 @@
 @props(['product'])
 
-<div class="card-zoom group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1.5 hover:border-amber-200 hover:shadow-xl hover:shadow-slate-200/70">
+{{-- Storefront product card (shop grid, related products) — same look as the homepage
+     best sellers. The list view in the shop grid relies on the image link being the
+     first child and the details block the second (see app.css `.is-list`). --}}
+@php
+    $onSale = $product->compare_at_price && $product->compare_at_price > $product->price;
+    $stars = (float) $product->rating;
+@endphp
+<div class="card-zoom group flex h-full flex-col overflow-hidden rounded-md border border-slate-200 bg-white transition duration-300 hover:border-amber-500 hover:shadow-lg">
     <a href="{{ route('products.show', $product) }}" class="relative block aspect-square overflow-hidden bg-white p-3">
         <img src="{{ media($product->image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="h-full w-full object-contain">
 
-        {{-- stock badge, top-left: green in stock → amber running low → red last one --}}
-        @php
-            $stock = $product->stock_badge;
-            $stockClass = [
-                'green' => 'bg-emerald-600 text-white',
-                'amber' => 'bg-amber-500 text-white',
-                'red' => 'bg-rose-600 text-white',
-                'slate' => 'bg-slate-800 text-white',
-            ][$stock['tone']];
-        @endphp
-        <span class="absolute left-3 top-3 rounded-md px-2.5 py-1 text-[11px] font-bold shadow-sm {{ $stockClass }}">{{ $stock['label'] }}</span>
-
-        {{-- savings badge, top-right --}}
-        @if ($product->discount_percent)
-            <span class="absolute right-3 top-3 grid h-12 w-12 place-items-center rounded-full bg-rose-600 text-center text-[11px] font-bold leading-tight text-white shadow-md">
-                Save<br>{{ $product->discount_percent }}%
-            </span>
+        @if ($onSale)
+            <span class="absolute left-2 top-2 rounded bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase text-white">Save {{ $product->discount_percent }}%</span>
+        @elseif (! $product->in_stock)
+            <span class="absolute left-2 top-2 rounded bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase text-white">Call for price</span>
         @endif
-
-        {{-- quick add — slides up on hover --}}
-        <span class="absolute inset-x-3 bottom-3 translate-y-[140%] rounded-full bg-slate-900 py-2.5 text-center text-xs font-bold text-white opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            View Product
-        </span>
+        <span class="absolute right-2.5 top-2.5 text-blue-600" aria-hidden="true"><x-icon name="heart" class="h-4 w-4" /></span>
     </a>
 
-    <div class="flex flex-1 flex-col p-4">
-        <p class="text-[11px] font-bold uppercase tracking-wide text-amber-500">{{ $product->brand }}</p>
-        <a href="{{ route('products.show', $product) }}" class="mt-1 line-clamp-2 text-base font-bold leading-snug text-slate-800 transition group-hover:text-amber-500">
+    <div class="flex flex-1 flex-col px-3 pb-3">
+        @if ($product->brand)
+            <p class="text-[10px] font-bold uppercase tracking-wide text-amber-600">{{ $product->brand }}</p>
+        @endif
+        <a href="{{ route('products.show', $product) }}" class="mt-0.5 line-clamp-2 min-h-9 text-[12.5px] font-semibold leading-[18px] text-[#111] transition hover:text-amber-600">
             {{ $product->name }}
         </a>
 
-        @if ($product->sku)
-            <p class="mt-1 text-sm font-semibold text-slate-500">SKU: <span class="font-bold text-slate-700">{{ $product->sku }}</span></p>
-        @endif
-
-        @if ($product->badge)
-            <x-brand-tag :tag="$product->badge" class="mt-2 self-start !text-[9px] !px-3 !py-1.5" />
-        @endif
-
-        <div class="mt-2 flex items-center gap-1">
-            <x-icon name="star" class="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-            <span class="text-xs font-semibold text-slate-600">{{ $product->rating }}</span>
-            <span class="text-xs text-slate-400">({{ $product->reviews_count }})</span>
+        <div class="mt-1.5 flex flex-wrap items-baseline gap-x-2">
+            <span class="text-lg font-extrabold text-[#111]">${{ number_format($product->price, 2) }}</span>
+            @if ($onSale)
+                <span class="text-xs text-slate-400 line-through">${{ number_format($product->compare_at_price, 2) }}</span>
+            @endif
         </div>
 
-        <div class="mt-auto flex items-end justify-between gap-2 pt-3">
-            <div class="flex items-baseline gap-2">
-                <span class="text-lg font-extrabold text-slate-900">${{ number_format($product->price, 2) }}</span>
-                @if ($product->compare_at_price && $product->compare_at_price > $product->price)
-                    <span class="text-sm text-slate-400 line-through">${{ number_format($product->compare_at_price, 2) }}</span>
-                @endif
-            </div>
+        <div class="flex items-center gap-1">
+            <span class="flex text-amber-500">
+                @for ($s = 1; $s <= 5; $s++)
+                    <x-icon name="star" solid class="h-3.5 w-3.5 {{ $s <= round($stars) ? '' : 'opacity-25' }}" />
+                @endfor
+            </span>
+            <span class="text-[11px] text-slate-500">({{ $product->reviews_count }})</span>
+        </div>
 
+        <div class="mt-auto pt-3">
             @if ($product->in_stock)
-                <form method="POST" action="{{ route('cart.add', $product) }}" data-cart-add class="shrink-0">
+                <form method="POST" action="{{ route('cart.add', $product) }}" data-cart-add>
                     @csrf
-                    <button type="submit" class="grid h-9 w-9 place-items-center rounded-lg bg-amber-400 text-slate-900 shadow-sm transition hover:bg-amber-500 active:scale-95" aria-label="Add {{ $product->name }} to cart" title="Add to cart">
-                        <x-icon name="cart" class="h-4 w-4" />
-                    </button>
+                    <button type="submit" class="w-full rounded bg-amber-500 py-2 text-xs font-bold text-white transition hover:bg-amber-600 active:scale-[.99]" aria-label="Add {{ $product->name }} to cart">Add to Cart</button>
                 </form>
+            @else
+                <a href="{{ route('products.show', $product) }}" class="block rounded bg-[#111] py-2 text-center text-xs font-bold text-white transition hover:bg-black">View Product</a>
             @endif
         </div>
     </div>

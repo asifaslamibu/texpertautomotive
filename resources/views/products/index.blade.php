@@ -16,10 +16,10 @@
         $seoDesc = "Shop {$seoCount} genuine ".request('brand')." products at {$seoSite} — warranty-backed parts with fast US shipping and expert support.";
     } elseif (request('q')) {
         $seoSubject = 'Search: '.request('q');
-        $seoDesc = "{$seoCount} results for “".request('q')."” at {$seoSite} — genuine HVAC, plumbing, electrical and printer supplies, shipped fast.";
+        $seoDesc = "{$seoCount} results for “".request('q')."” at {$seoSite} — genuine car audio, electronics and accessories, shipped fast.";
     } else {
         $seoSubject = 'All Products';
-        $seoDesc = "Shop {$seoCount} HVAC, plumbing, electrical and printer supply products at {$seoSite} — genuine, warranty-backed parts with fast US shipping.";
+        $seoDesc = "Shop {$seoCount} car audio, electronics and accessories at {$seoSite} — genuine, warranty-backed products with fast US shipping.";
     }
 @endphp
 
@@ -34,23 +34,30 @@
 @section('content')
 
 {{-- breadcrumb / heading --}}
-<section class="border-b border-slate-200 bg-slate-50">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <nav class="flex items-center gap-2 text-sm text-slate-500">
+<section class="relative overflow-hidden bg-[#111] text-white">
+    <div class="pointer-events-none absolute -left-16 top-0 h-full w-40 -skew-x-[24deg] bg-gradient-to-b from-amber-500/0 via-amber-500/25 to-amber-500/0"></div>
+    <div class="pointer-events-none absolute -left-4 top-0 h-full w-2 -skew-x-[24deg] bg-amber-500/80"></div>
+    <div class="relative mx-auto max-w-7xl px-4 py-7 sm:px-6">
+        <nav class="flex items-center gap-2 text-sm text-white/60">
             <a href="{{ route('home') }}" class="hover:text-amber-500">Home</a>
             <span>/</span>
             <a href="{{ route('products.index') }}" class="hover:text-amber-500">Products</a>
             @if ($activeCategory)
                 <span>/</span>
-                <span class="font-semibold text-slate-700">{{ $activeCategory->name }}</span>
+                <span class="font-semibold text-white">{{ $activeCategory->name }}</span>
             @endif
         </nav>
-        <h1 class="mt-3 text-3xl font-black tracking-tight text-slate-900">
+        <h1 class="mt-2 text-3xl font-black uppercase italic tracking-tight sm:text-4xl">
             {{ $activeCategory?->name ?? (request('q') ? 'Search: “'.request('q').'”' : 'All Products') }}
         </h1>
-        @if ($activeCategory?->tagline)
-            <p class="mt-1 text-slate-500">{{ $activeCategory->tagline }}</p>
-        @endif
+        <p class="mt-1 text-sm text-white/70">
+            {{ $activeCategory?->tagline ?: number_format($products->total()).' products · Genuine brands · Fast shipping' }}
+        </p>
+    </div>
+</section>
+
+<section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
         {{-- subcategories: a thumbnail + name list on mobile, circles on desktop --}}
         @if ($activeCategory && $activeCategory->visibleChildren->count())
@@ -86,11 +93,11 @@
             @endif
 
             {{-- desktop circles: one row, the rest behind the button --}}
-            <div data-subcats-circles class="mt-8 hidden max-h-[11.5rem] flex-wrap justify-center gap-x-8 gap-y-6 overflow-hidden sm:justify-start lg:flex">
+            <div data-subcats-circles class="mt-6 hidden max-h-[11.5rem] flex-wrap justify-center gap-x-8 gap-y-6 overflow-hidden sm:justify-start lg:flex">
                 @foreach ($subcats as $child)
                     <a href="{{ route('products.index', ['category' => $child->slug]) }}"
                        class="group flex w-28 flex-col items-center text-center">
-                        <span class="grid h-28 w-28 place-items-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-slate-100 transition group-hover:-translate-y-1 group-hover:shadow-md">
+                        <span class="grid h-24 w-28 place-items-center overflow-hidden rounded-md border border-slate-200 bg-white transition group-hover:-translate-y-1 group-hover:border-amber-500 group-hover:shadow-lg">
                             @if ($child->sample_image)
                                 <img src="{{ media($child->sample_image) }}" alt="{{ $child->name }}" loading="lazy" class="h-20 w-20 object-contain">
                             @else
@@ -105,11 +112,12 @@
                     class="mx-auto mt-5 hidden rounded-full border border-slate-200 bg-white px-6 py-2 text-xs font-black uppercase tracking-wide text-slate-700 transition hover:border-amber-400 hover:text-amber-600 lg:block">
                 View more
             </button>
+            <div class="h-6"></div>
         @endif
     </div>
 </section>
 
-<div class="mx-auto max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:flex">
+<div class="mx-auto max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:flex">
 
     {{-- ===== Sidebar filters ===== --}}
     @php
@@ -143,16 +151,16 @@
 
             {{-- active filters summary --}}
             @if ($hasFilters)
-                <div class="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5">
+                <div class="flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-4 py-2.5">
                     <span class="text-xs font-bold uppercase tracking-wide text-amber-700">Filters active</span>
                     <a href="{{ $clearUrl }}" class="text-xs font-semibold text-amber-700 underline hover:text-amber-800">Clear all</a>
                 </div>
             @endif
 
             {{-- Categories --}}
-            <details open class="acc rounded-xl border border-slate-200 bg-white">
+            <details open class="acc overflow-hidden rounded-md border border-slate-200 bg-white">
                 <summary class="flex items-center justify-between px-5 py-3.5">
-                    <span class="text-sm font-bold uppercase tracking-wide text-slate-800">Categories</span>
+                    <span class="text-[13px] font-extrabold uppercase tracking-wide text-[#111]">Categories</span>
                     <span class="acc-sign text-lg font-bold text-amber-500"></span>
                 </summary>
                 <div class="px-5 pb-4">
@@ -175,9 +183,9 @@
 
             {{-- Brand --}}
             @if ($brandCounts->count())
-                <details open class="acc rounded-xl border border-slate-200 bg-white">
+                <details open class="acc overflow-hidden rounded-md border border-slate-200 bg-white">
                     <summary class="flex items-center justify-between px-5 py-3.5">
-                        <span class="text-sm font-bold uppercase tracking-wide text-slate-800">Brand</span>
+                        <span class="text-[13px] font-extrabold uppercase tracking-wide text-[#111]">Brand</span>
                         <span class="acc-sign text-lg font-bold text-amber-500"></span>
                     </summary>
                     <div class="px-5 pb-4">
@@ -203,9 +211,9 @@
             @endif
 
             {{-- Price --}}
-            <details open class="acc rounded-xl border border-slate-200 bg-white">
+            <details open class="acc overflow-hidden rounded-md border border-slate-200 bg-white">
                 <summary class="flex items-center justify-between px-5 py-3.5">
-                    <span class="text-sm font-bold uppercase tracking-wide text-slate-800">Price</span>
+                    <span class="text-[13px] font-extrabold uppercase tracking-wide text-[#111]">Price</span>
                     <span class="acc-sign text-lg font-bold text-amber-500"></span>
                 </summary>
                 <div class="px-5 pb-4">
@@ -219,14 +227,14 @@
                     @if ($priceBounds && $priceBounds->mx)
                         <p class="mt-2 text-xs text-slate-400">Range: ${{ number_format(floor($priceBounds->mn)) }} – ${{ number_format(ceil($priceBounds->mx)) }}</p>
                     @endif
-                    <button type="submit" class="mt-3 w-full rounded-lg bg-slate-900 py-2 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-slate-800">Apply</button>
+                    <button type="submit" class="mt-3 w-full rounded bg-amber-500 py-2 text-xs font-bold uppercase tracking-wide text-white transition hover:bg-amber-600">Apply</button>
                 </div>
             </details>
 
             {{-- Availability --}}
-            <details open class="acc rounded-xl border border-slate-200 bg-white">
+            <details open class="acc overflow-hidden rounded-md border border-slate-200 bg-white">
                 <summary class="flex items-center justify-between px-5 py-3.5">
-                    <span class="text-sm font-bold uppercase tracking-wide text-slate-800">Availability</span>
+                    <span class="text-[13px] font-extrabold uppercase tracking-wide text-[#111]">Availability</span>
                     <span class="acc-sign text-lg font-bold text-amber-500"></span>
                 </summary>
                 <div class="px-5 pb-4">
@@ -252,7 +260,7 @@
                 @if ($hasFilters)
                     <a href="{{ $clearUrl }}" class="shrink-0 rounded-lg border border-slate-300 px-4 py-3 text-sm font-bold text-slate-700">Clear</a>
                 @endif
-                <button type="submit" form="filters-form" class="flex-1 rounded-lg bg-slate-900 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-slate-800">
+                <button type="submit" form="filters-form" class="flex-1 rounded bg-amber-500 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-amber-600">
                     Show {{ number_format($products->total()) }} products
                 </button>
             </div>
@@ -302,7 +310,7 @@
         </div>
 
         {{-- desktop toolbar --}}
-        <form method="GET" class="mb-6 hidden flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-5 py-3 lg:flex">
+        <form method="GET" class="mb-6 hidden flex-wrap items-center justify-between gap-4 rounded-md border border-slate-200 bg-white px-5 py-3 lg:flex">
             {{-- preserve every active filter when changing the sort order --}}
             @if ($activeCategory)<input type="hidden" name="category" value="{{ $activeCategory->slug }}">@endif
             @if (request('q'))<input type="hidden" name="q" value="{{ request('q') }}">@endif
@@ -352,7 +360,7 @@
         </form>
 
         @if ($products->count())
-            <div data-products-grid class="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+            <div data-products-grid class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($products as $product)
                     <div data-reveal class="min-w-0" style="--reveal-delay:{{ ($loop->index % 4) * 60 }}ms">
                         <x-product-card :product="$product" />
@@ -365,18 +373,18 @@
                 @if ($products->hasMorePages())
                     <div data-load-more-wrap>
                         <button type="button" data-load-more data-next="{{ $products->nextPageUrl() }}"
-                                class="rounded-full bg-slate-900 px-8 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60">
+                                class="rounded bg-amber-500 px-10 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:bg-amber-600 disabled:cursor-wait disabled:opacity-60">
                             Load More
                         </button>
                     </div>
                 @endif
             </div>
         @else
-            <div class="rounded-xl border border-dashed border-slate-300 bg-white py-20 text-center">
+            <div class="rounded-md border border-dashed border-slate-300 bg-white py-20 text-center">
                 <x-icon name="search" class="mx-auto h-10 w-10 text-slate-300" />
                 <p class="mt-4 font-semibold text-slate-700">No products found</p>
                 <p class="mt-1 text-sm text-slate-500">Try a different category or search term.</p>
-                <a href="{{ route('products.index') }}" class="mt-5 inline-block rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">View all products</a>
+                <a href="{{ route('products.index') }}" class="mt-5 inline-block rounded bg-amber-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-amber-600">View all products</a>
             </div>
         @endif
 

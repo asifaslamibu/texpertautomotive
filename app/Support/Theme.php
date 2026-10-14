@@ -6,9 +6,9 @@ use App\Models\Setting;
 
 class Theme
 {
-    /** Default brand colours (amber-500 accent, slate-900 dark). */
-    public const DEFAULT_PRIMARY = '#f59e0b';
-    public const DEFAULT_SECONDARY = '#0f172a';
+    /** Default brand colours (Texpert Automotive orange accent, near-black dark). */
+    public const DEFAULT_PRIMARY = '#f15a0b';
+    public const DEFAULT_SECONDARY = '#111111';
 
     /** Mix weights for building a 50–950 shade ramp from a single 500-anchor colour. */
     private const LIGHT = [50 => 0.95, 100 => 0.90, 200 => 0.78, 300 => 0.60, 400 => 0.32];

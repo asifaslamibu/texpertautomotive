@@ -27,7 +27,7 @@
             'price' => number_format((float) $product->price, 2, '.', ''),
             'availability' => $product->in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             'itemCondition' => 'https://schema.org/NewCondition',
-            'seller' => ['@type' => 'Organization', 'name' => \App\Models\Setting::get('site_name', 'Texpert Deals')],
+            'seller' => ['@type' => 'Organization', 'name' => \App\Models\Setting::get('site_name', 'Texpert Automotive')],
         ],
         // only the reviews actually on the page, so the rich result matches what a shopper sees
         'aggregateRating' => ($product->reviews->count() > 0 && $avgRating > 0) ? [
@@ -80,21 +80,21 @@
                 <div class="flex flex-col gap-3">
                     @foreach ($gallery as $i => $img)
                         <button type="button" data-gallery-thumb data-img="{{ media($img) }}"
-                                class="h-16 w-16 overflow-hidden rounded-lg border-2 bg-slate-50 {{ $i === 0 ? 'border-amber-400' : 'border-slate-200 hover:border-slate-300' }}">
+                                class="h-16 w-16 overflow-hidden rounded-md border-2 bg-white {{ $i === 0 ? 'border-amber-500' : 'border-slate-200 hover:border-slate-300' }}">
                             <img src="{{ media($img) }}" alt="" class="h-full w-full object-cover">
                         </button>
                     @endforeach
                 </div>
             @endif
-            <div class="relative flex-1 rounded-2xl border border-slate-200 bg-white" data-zoom>
-                <div class="overflow-hidden rounded-2xl">
+            <div class="relative flex-1 rounded-md border border-slate-200 bg-white" data-zoom>
+                <div class="overflow-hidden rounded-md">
                     <img data-gallery-main data-zoom-img src="{{ media($gallery[0] ?? $product->image) }}" alt="{{ $product->name }}" class="mx-auto h-80 w-full cursor-zoom-in object-contain p-4 sm:h-[520px]">
                 </div>
                 {{-- hover lens + zoom preview panel (shown to the right, image is never cropped) --}}
                 <div data-zoom-lens class="pointer-events-none absolute hidden h-40 w-40 rounded-lg border-2 border-amber-400/70 bg-amber-200/10"></div>
-                <div data-zoom-result class="pointer-events-none absolute left-full top-0 z-30 ml-4 hidden h-full w-full rounded-2xl border border-slate-200 bg-white bg-no-repeat shadow-2xl shadow-slate-400/30"></div>
+                <div data-zoom-result class="pointer-events-none absolute left-full top-0 z-30 ml-4 hidden h-full w-full rounded-md border border-slate-200 bg-white bg-no-repeat shadow-2xl shadow-slate-400/30"></div>
                 @if ($product->discount_percent)
-                    <span class="absolute left-4 top-4 z-10 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white">Save {{ $product->discount_percent }}%</span>
+                    <span class="absolute left-4 top-4 z-10 rounded bg-red-600 px-3 py-1 text-xs font-bold uppercase text-white">Save {{ $product->discount_percent }}%</span>
                 @endif
             </div>
         </div>
@@ -107,7 +107,7 @@
                 </div>
             @endif
 
-            <h1 class="text-2xl font-black leading-tight text-slate-900 sm:text-[1.75rem]">{{ $product->name }}</h1>
+            <h1 class="text-2xl font-extrabold leading-tight text-[#111] sm:text-[1.75rem]">{{ $product->name }}</h1>
 
             {{-- brand + sku --}}
             <div class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 pb-4 text-sm text-slate-500">
@@ -172,7 +172,7 @@
             <div class="mt-4 border-t border-slate-200"></div>
 
             <div class="mt-5 flex items-baseline gap-3">
-                <span class="text-3xl font-black text-slate-900">${{ number_format($product->price, 2) }}</span>
+                <span class="text-3xl font-black text-[#111]">${{ number_format($product->price, 2) }}</span>
                 <span class="text-sm text-slate-500">/each</span>
                 @if ($product->compare_at_price && $product->compare_at_price > $product->price)
                     <span class="text-lg text-slate-400 line-through">${{ number_format($product->compare_at_price, 2) }}</span>
@@ -185,16 +185,16 @@
                     $oosPhone = \App\Models\Setting::get('contact_phone');
                     $oosEmail = \App\Models\Setting::get('contact_email');
                 @endphp
-                <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
+                <div class="mt-6 rounded-md border border-amber-200 bg-amber-50 p-5">
                     <p class="font-bold text-amber-900">Currently out of stock</p>
                     <p class="mt-1 text-sm text-amber-800">Call or email us for pricing, lead time and alternatives — we source this part on request.</p>
                     <div class="mt-4 flex flex-col gap-2 sm:flex-row">
                         @if ($oosPhone)
-                            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $oosPhone) }}" class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-slate-800">
+                            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $oosPhone) }}" class="flex flex-1 items-center justify-center gap-2 rounded bg-[#111] px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-black">
                                 <x-icon name="phone" class="h-5 w-5" /> Call for pricing
                             </a>
                         @endif
-                        <a href="{{ route('part-request', ['sku' => $product->sku, 'product' => $product->name]) }}" class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-slate-900 shadow-sm transition hover:bg-amber-500">
+                        <a href="{{ route('part-request', ['sku' => $product->sku, 'product' => $product->name]) }}" class="flex flex-1 items-center justify-center gap-2 rounded bg-amber-500 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-amber-600">
                             Request this part
                         </a>
                     </div>
@@ -208,7 +208,7 @@
                 @csrf
                 @php $maxQty = \App\Support\Cart::availableFor($product); @endphp
                 <div class="flex flex-wrap items-center gap-3">
-                    <div class="inline-flex items-center rounded-lg border border-slate-300" data-qty>
+                    <div class="inline-flex items-center rounded border border-slate-300" data-qty>
                         <button type="button" data-qty-dec class="px-4 py-3 text-lg text-slate-500 hover:text-amber-600" aria-label="Decrease">−</button>
                         <input name="qty" value="1" inputmode="numeric" data-qty-input @if($maxQty) max="{{ $maxQty }}" @endif class="w-14 border-x border-slate-200 bg-transparent py-2.5 text-center text-sm font-semibold outline-none" aria-label="Quantity">
                         <button type="button" data-qty-inc class="px-4 py-3 text-lg text-slate-500 hover:text-amber-600" aria-label="Increase">+</button>
@@ -220,41 +220,41 @@
                     @endif
                 </div>
 
-                <button type="submit" data-attn-cart class="attn-cart flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-slate-800 active:scale-[.99]">
+                <button type="submit" data-attn-cart class="attn-cart flex w-full items-center justify-center gap-2 rounded bg-amber-500 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-amber-600 active:scale-[.99]">
                     <x-icon name="cart" class="h-5 w-5" /> Add to Cart
                 </button>
-                <button type="submit" name="buy_now" value="1" data-buy-now class="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3.5 text-sm font-black uppercase tracking-wide text-slate-900 shadow-sm transition hover:bg-amber-500 active:scale-[.99]">
+                <button type="submit" name="buy_now" value="1" data-buy-now class="flex w-full items-center justify-center gap-2 rounded bg-[#111] px-6 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-black active:scale-[.99]">
                     Buy Now
                 </button>
             </form>
             @endunless
 
             {{-- accepted payments + secure checkout --}}
-            <x-payment-icons secure class="mt-4 flex-wrap justify-center rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-3" />
+            <x-payment-icons secure class="mt-4 flex-wrap justify-center rounded-md border border-slate-100 bg-slate-50/70 px-3 py-3" />
 
             {{-- genuine / warranty reassurance --}}
             <div class="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs font-semibold text-slate-600">
-                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-emerald-500" /> 100% Genuine Parts</span>
-                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-emerald-500" /> Manufacturer Warranty</span>
-                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-emerald-500" /> Ships from USA</span>
+                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-amber-500" /> 100% Genuine Products</span>
+                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-amber-500" /> Manufacturer Warranty</span>
+                <span class="flex items-center gap-1.5"><x-icon name="check" class="h-4 w-4 text-amber-500" /> Ships from USA</span>
             </div>
 
             {{-- trust badges --}}
-            <div class="mt-5 grid grid-cols-3 gap-4 rounded-xl bg-slate-50 px-4 py-6">
+            <div class="mt-5 grid grid-cols-3 gap-4 rounded-md border border-slate-200 bg-white px-4 py-5">
                 <div class="flex flex-col items-center gap-2.5 text-center">
-                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-slate-900 text-slate-900">
+                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-amber-500 text-amber-500">
                         <x-icon name="lock" class="h-6 w-6" stroke-width="2.5" />
                     </span>
                     <span class="text-xs font-semibold text-slate-700">Secure Payments</span>
                 </div>
                 <div class="flex flex-col items-center gap-2.5 text-center">
-                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-slate-900 leading-none text-slate-900">
+                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-amber-500 leading-none text-amber-500">
                         <span class="text-center font-black"><span class="block text-base">30</span><span class="block text-[10px] tracking-wide">DAY</span></span>
                     </span>
                     <span class="text-xs font-semibold text-slate-700">Easy Returns</span>
                 </div>
                 <div class="flex flex-col items-center gap-2.5 text-center">
-                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-slate-900 text-slate-900">
+                    <span class="grid h-14 w-14 place-items-center rounded-full border-2 border-amber-500 text-amber-500">
                         <x-icon name="truck" class="h-6 w-6" stroke-width="2.5" />
                     </span>
                     <span class="text-xs font-semibold text-slate-700">Fast Shipping</span>
@@ -265,12 +265,12 @@
     </div>
 
     {{-- ============ COLLAPSIBLE SECTIONS ============ --}}
-    <div class="mt-12 overflow-hidden rounded-2xl border border-slate-200">
+    <div class="mt-12 overflow-hidden rounded-md border border-slate-200">
 
         {{-- Product Highlights --}}
         <details open class="acc border-b border-slate-200 bg-white">
             <summary class="flex items-center justify-between px-6 py-4">
-                <span class="text-lg font-bold text-slate-900">Product Highlights</span>
+                <span class="text-base font-extrabold text-[#111]">Product Highlights</span>
                 <span class="acc-sign text-xl font-bold text-amber-500"></span>
             </summary>
             <div class="grid grid-cols-2 gap-4 px-6 pb-6 sm:grid-cols-4">
@@ -283,7 +283,7 @@
                     ];
                 @endphp
                 @foreach ($highlights as [$icon, $title, $sub])
-                    <div class="flex flex-col items-center rounded-xl border border-slate-100 bg-slate-50 p-4 text-center">
+                    <div class="flex flex-col items-center rounded-md border border-slate-100 bg-slate-50 p-4 text-center">
                         <x-icon name="{{ $icon }}" class="h-7 w-7 text-amber-500" />
                         <span class="mt-2 text-sm font-bold text-slate-800">{{ $title }}</span>
                         <span class="text-xs text-slate-400">{{ $sub }}</span>
@@ -295,7 +295,7 @@
         {{-- Description --}}
         <details open class="acc border-b border-slate-200 bg-white">
             <summary class="flex items-center justify-between px-6 py-4">
-                <span class="text-lg font-bold text-slate-900">Description</span>
+                <span class="text-base font-extrabold text-[#111]">Description</span>
                 <span class="acc-sign text-xl font-bold text-amber-500"></span>
             </summary>
             <div class="px-6 pb-6">
@@ -323,7 +323,7 @@
         {{-- Specs --}}
         <details open class="acc border-b border-slate-200 bg-white">
             <summary class="flex items-center justify-between px-6 py-4">
-                <span class="text-lg font-bold text-slate-900">Specs</span>
+                <span class="text-base font-extrabold text-[#111]">Specs</span>
                 <span class="acc-sign text-xl font-bold text-amber-500"></span>
             </summary>
             <div class="px-6 pb-6">
@@ -440,7 +440,7 @@
         {{-- Contact --}}
         <details class="acc bg-white">
             <summary class="flex items-center justify-between px-6 py-4">
-                <span class="text-lg font-bold text-slate-900">Contact</span>
+                <span class="text-base font-extrabold text-[#111]">Contact</span>
                 <span class="acc-sign text-xl font-bold text-amber-500"></span>
             </summary>
             @php $cPhone = \App\Models\Setting::get('contact_phone', '+1-254-358-0017'); $cToll = \App\Models\Setting::get('toll_free', '(945) 427-9519'); @endphp
@@ -460,7 +460,7 @@
     @if ($related->count())
         <section class="mt-14" data-slider data-no-autoplay>
             <div class="mb-5 flex items-center justify-between gap-3">
-                <h2 class="text-xl font-black tracking-tight text-slate-900">You May Also Need</h2>
+                <h2 class="text-xl font-extrabold tracking-tight text-[#111] sm:text-[22px]">You May Also Need</h2>
                 <div class="flex gap-2">
                     <button type="button" data-slider-prev aria-label="Previous"
                             class="grid h-9 w-9 place-items-center rounded-full border border-slate-300 text-slate-600 transition hover:border-amber-400 hover:bg-amber-50 hover:text-amber-600">
@@ -472,9 +472,9 @@
                     </button>
                 </div>
             </div>
-            <div data-slider-track class="no-scrollbar flex snap-x gap-5 overflow-x-auto scroll-smooth pb-2">
+            <div data-slider-track class="no-scrollbar flex snap-x gap-3 overflow-x-auto scroll-smooth pb-2">
                 @foreach ($related as $item)
-                    <div data-slide class="w-52 shrink-0 snap-start">
+                    <div data-slide class="w-52 shrink-0 snap-start sm:w-56">
                         <x-product-card :product="$item" />
                     </div>
                 @endforeach
@@ -483,20 +483,20 @@
     @endif
 
     {{-- ============ part request ============ --}}
-    <section class="mt-10 flex flex-col items-start justify-between gap-4 rounded-2xl bg-amber-50 px-5 py-5 ring-1 ring-amber-100 sm:flex-row sm:items-center sm:px-7 sm:py-6">
+    <section class="mt-10 flex flex-col items-start justify-between gap-4 rounded-md bg-[#141414] px-5 py-5 text-white sm:flex-row sm:items-center sm:px-7 sm:py-6">
         <div class="flex items-center gap-4">
-            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-amber-400 text-slate-900"><x-icon name="chat" class="h-5 w-5" /></span>
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-amber-500 text-white"><x-icon name="quote" class="h-5 w-5" /></span>
             <div>
-                <p class="text-sm font-bold text-slate-900">Not sure this is the right part?</p>
-                <p class="mt-0.5 text-sm text-slate-600">Contact our support team before ordering and we'll help you verify the product details.</p>
+                <p class="text-sm font-bold">Not sure this is the right part?</p>
+                <p class="mt-0.5 text-sm text-white/75">Contact our support team before ordering and we'll help you verify the product details.</p>
             </div>
         </div>
         <a href="{{ route('part-request', ['product' => $product->name, 'sku' => $product->sku]) }}"
-           class="shrink-0 rounded-lg bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-slate-800">Part Request Form</a>
+           class="shrink-0 rounded border-2 border-amber-500 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-amber-500">Part Request Form</a>
     </section>
 
     {{-- ============ returns ============ --}}
-    <section class="mt-10 rounded-2xl border-l-4 border-amber-400 bg-slate-50 px-5 py-5 sm:px-7 sm:py-6">
+    <section class="mt-10 rounded-md border-l-4 border-amber-400 bg-slate-50 px-5 py-5 sm:px-7 sm:py-6">
         <h2 class="text-xl font-black tracking-tight text-slate-900 sm:text-2xl">Need to return it?</h2>
         <p class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-slate-600 sm:text-lg">
             <span>30-day returns</span>
@@ -514,12 +514,12 @@
         <h2 class="text-2xl font-black tracking-tight text-slate-900">Product Reviews</h2>
 
         @if (session('status'))
-            <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{{ session('status') }}</div>
+            <div class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{{ session('status') }}</div>
         @endif
 
         <div class="mt-6 grid gap-8 lg:grid-cols-[280px_1fr]">
             {{-- summary --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-6">
+            <div class="rounded-md border border-slate-200 bg-white p-6">
                 <div class="text-center">
                     <p class="text-5xl font-black text-slate-900">{{ $avgRating }}</p>
                     <div class="mt-1 flex justify-center text-amber-400">
@@ -540,7 +540,7 @@
                         </div>
                     @endforeach
                 </div>
-                <button type="button" data-review-open class="mt-6 block w-full rounded-lg bg-slate-900 py-2.5 text-center text-sm font-bold text-white transition hover:bg-slate-800">Write a Review</button>
+                <button type="button" data-review-open class="mt-6 block w-full rounded bg-amber-500 py-2.5 text-center text-sm font-bold text-white transition hover:bg-amber-600">Write a Review</button>
             </div>
 
             {{-- review list --}}
@@ -567,18 +567,18 @@
                         </div>
                     </article>
                 @empty
-                    <div class="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center">
+                    <div class="rounded-md border border-dashed border-slate-300 bg-white py-16 text-center">
                         <x-icon name="star" class="mx-auto h-10 w-10 text-slate-300" />
                         <p class="mt-3 font-semibold text-slate-700">No reviews yet</p>
                         <p class="mt-1 text-sm text-slate-500">Be the first to review this product.</p>
-                        <button type="button" data-review-open class="mt-4 inline-block rounded-lg bg-amber-400 px-5 py-2 text-sm font-bold text-slate-900 hover:bg-amber-500">Write a Review</button>
+                        <button type="button" data-review-open class="mt-4 inline-block rounded bg-amber-500 px-5 py-2 text-sm font-bold text-white hover:bg-amber-600">Write a Review</button>
                     </div>
                 @endforelse
             </div>
         </div>
 
         {{-- write a review: hidden until asked for, and kept open when it comes back with errors --}}
-        <div id="write-review" data-review-form class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 {{ $errors->any() ? '' : 'hidden' }}">
+        <div id="write-review" data-review-form class="mt-8 rounded-md border border-slate-200 bg-white p-6 {{ $errors->any() ? '' : 'hidden' }}">
             <h3 class="text-lg font-black text-slate-900">Write a review</h3>
             <p class="mt-1 text-sm text-slate-500">Tell other buyers how this part worked for you. Reviews appear once our team has checked them.</p>
 
@@ -616,7 +616,7 @@
                 @include('partials.recaptcha')
 
                 <div class="flex items-center gap-3">
-                    <button class="rounded-lg bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800">Submit review</button>
+                    <button class="rounded bg-amber-500 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-amber-600">Submit review</button>
                     <button type="button" data-review-cancel class="text-sm font-semibold text-slate-500 hover:text-slate-700">Cancel</button>
                 </div>
             </form>

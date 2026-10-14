@@ -64,7 +64,20 @@ class HomeController extends Controller
 
             $hasProducts = fn ($brand) => in_array(mb_strtolower($brand->name), $brandsWithProducts, true);
 
+            // promo cards: the three biggest brands, each with its real best discount and
+            // the photo of its most-discounted product
+            $discount = 'CASE WHEN compare_at_price > price THEN (compare_at_price - price) / compare_at_price ELSE 0 END';
+            $promoBrands = $notHidden(Product::published())
+                ->whereNotNull('brand')->where('brand', '!=', '')
+                ->selectRaw("brand, COUNT(*) AS products_count, ROUND(MAX({$discount}) * 100) AS max_off")
+                ->groupBy('brand')->orderByDesc('products_count')->take(3)->get();
+            foreach ($promoBrands as $promo) {
+                $promo->image = $notHidden(Product::published())->where('brand', $promo->brand)
+                    ->orderByRaw("{$discount} DESC")->orderByDesc('in_stock')->value('image');
+            }
+
             return [
+                'promoBrands' => $promoBrands,
                 'departments' => $departments,
                 'popularCategories' => $popularCategories,
                 'featuredProducts' => $featuredProducts,
@@ -82,7 +95,7 @@ class HomeController extends Controller
 
         // latest blog posts (live so new posts appear instantly; safe before the migration)
         $sections['latestPosts'] = \Illuminate\Support\Facades\Schema::hasTable('blogs')
-            ? \App\Models\Blog::published()->orderByDesc('published_at')->orderByDesc('id')->take(3)->get()
+            ? \App\Models\Blog::published()->orderByDesc('published_at')->orderByDesc('id')->take(4)->get()
             : collect();
 
         return view('home', $sections);
